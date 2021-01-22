@@ -36,7 +36,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #Push to cloud
-PUSH="git push -u origin master"
+PUSH="git push -u origin main"
 echo $PUSH
 $PUSH
 
