@@ -7,11 +7,10 @@ $(basename $0): missing file operand
 Usage: $(basename $0) <executable>
 Copy shared libraries of an executable to the 'libs' directory in PWD.
 EOU
-exit 1
+	exit 1
 }
 
 path="libs"
-
 mkdir -p $path
 
 #Validate the inputs
@@ -35,3 +34,4 @@ do
     cp "$dep" "$path"
 done
 
+exit $?
