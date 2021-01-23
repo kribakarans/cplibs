@@ -1,4 +1,6 @@
 
+# GNU Makefile
+
 EXE = cplibs
 SRC = cplibs.sh
 BIN = $(HOME)/bin
