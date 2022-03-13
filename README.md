@@ -1,5 +1,5 @@
 # cplibs
-Copy shared libraries of an executable to the 'libs' directory.
+Copy shared object dependencies of an executable to the directory './cplibs.d'.
 
 **References:**<br>
 https://gist.github.com/ekimekim/33fbe944508da6cfce86<br>

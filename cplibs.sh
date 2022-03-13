@@ -1,37 +1,41 @@
-#!/bin/bash 
+#!/bin/bash
 
-function usage()
-{
-    cat << EOU
-$(basename $0): missing file operand
-Usage: $(basename $0) <executable>
-Copy shared libraries of an executable to the 'libs' directory in PWD.
+set -e
+
+VERSION=1.1
+DEST=./cplibs.d
+
+usage() {
+cat << EOU
+$(basename $0)-$VERSION: missing file operand
+Usage: $(basename $0) [FILE] ...
+Copy shared object dependencies of an executable to the directory '$DEST'.
 EOU
-	exit 1
+    exit 1
 }
-
-path="libs"
-mkdir -p $path
 
 #Validate the inputs
 [[ $# < 1 ]] && usage
 
-#Check if the paths are vaild
-[[ ! -e $1 ]] && echo "Not a vaild input $1" && exit 1 
-[[ -d $path ]] || echo "No such directory $path creating..."&& mkdir -p "$path"
+#Create target directory if not exist
+[[ ! -d $DEST ]] && mkdir -p "$DEST"
 
-#Get the library dependencies
-echo "Collecting the shared library dependencies for $1..."
-deps=$(ldd $1 | awk 'BEGIN{ORS=" "}$1\
-~/^\//{print $1}$3~/^\//{print $3}'\
- | sed 's/,$/\n/')
-echo "Copying the dependencies to $path"
-
-#Copy the deps
-for dep in $deps
+for FILE in "$@"
 do
-    echo "Copying $dep to $path"
-    cp "$dep" "$path"
+	[[ ! -e $FILE ]] && echo "$FILE: file not found !!!" && continue;
+
+	#Get the library dependencies
+	echo "Copy dependencies of '$FILE' to $DEST"
+
+	#Get shared object dependencies
+	DEPS=$(ldd $FILE | awk 'BEGIN{ORS=" "}$1 ~/^\//{print $1}$3~/^\//{print $3}' | sed 's/,$/\n/')
+
+	#Copy the dependencies
+	for DEP in $DEPS
+	do
+		echo "copying ... $DEP"
+		install $(stat -L -c '-m %a -g %g -o %u' "$DEP") -D $DEP $DEST$DEP
+	done
 done
 
-exit $?
+exit 0

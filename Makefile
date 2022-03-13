@@ -9,11 +9,12 @@ all:
 	bash -n $(SRC)
 
 install:
-	install -d $(BIN)
 	install -D $(SRC) $(BIN)/$(EXE)
 
 uninstall:
 	rm -f $(BIN)/$(EXE)
+
+clean:
 
 help:
 	@echo "make [OPTIONS]"
